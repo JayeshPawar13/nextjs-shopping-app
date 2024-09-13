@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Product } from "./products/products.interface";
 
 async function getProducts() {
   const products = await fetch("http://localhost:3000/api/products");
@@ -7,7 +8,7 @@ async function getProducts() {
 }
 
 export default async function Home() {
-  const products = await getProducts();
+  const products: Product[] = await getProducts();
 
   const getRandomFloatStyle = () => {
     const randomDuration = (Math.random() * 3 + 2).toFixed(2);

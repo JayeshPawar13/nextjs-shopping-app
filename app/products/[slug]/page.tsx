@@ -4,7 +4,11 @@ async function getProduct(id: string) {
   return products.json();
 }
 
-export default async function Product({ params }) {
+export default async function Product({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const products = await getProduct(params.slug);
 
   return <h1>Product {products[0].name}</h1>;

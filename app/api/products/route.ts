@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { connectToDatabase } from "@/lib/mongodb";
-import { ObjectId } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
 
   const client = await connectToDatabase();
-  const collection = client?.db().collection("products");
+  const collection = (client as MongoClient)?.db().collection("products");
   let products;
 
   if (id) {
@@ -25,16 +25,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error(error);
 
-    return (
-      NextResponse.json({ error: "Failed to fetch data" }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    return NextResponse.json(
+      { error: "Failed to fetch data" },
+      { status: 500 }
     );
   } finally {
-    client?.close();
   }
 }

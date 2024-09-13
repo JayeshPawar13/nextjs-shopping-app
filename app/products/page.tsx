@@ -1,3 +1,5 @@
+import { Product } from "./products.interface";
+
 import { title } from "@/components/primitives";
 import ProductCard from "@/components/product-card";
 async function getProducts() {
@@ -6,7 +8,7 @@ async function getProducts() {
   return products.json();
 }
 export default async function ProductsPage() {
-  const products = await getProducts();
+  const products: Product[] = await getProducts();
 
   return (
     <>

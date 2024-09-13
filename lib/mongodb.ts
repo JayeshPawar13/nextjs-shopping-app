@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { NextResponse } from "next/server";
 
 export async function connectToDatabase() {
   let client;
@@ -8,14 +9,9 @@ export async function connectToDatabase() {
     client = await MongoClient.connect(connectionString);
     return client;
   } catch (error) {
-    new Response(
-      JSON.stringify({ error: "Failed to establish connection to database" }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    return NextResponse.json({
+      error: "Failed to establish connection to database",
+      status: 500,
+    });
   }
 }

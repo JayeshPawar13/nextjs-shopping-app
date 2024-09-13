@@ -3,8 +3,9 @@ import { Card, Button, CardHeader } from "@nextui-org/react";
 import Image from "next/image"; // Or use <img> if not using Next.js
 import Rating from "./rating";
 import Link from "next/link";
+import { Product } from "@/app/products/products.interface";
 
-const ProductList = ({ products }) => {
+const ProductList = ({ products }: { products: Product[] }) => {
   console.log(products);
 
   return (
