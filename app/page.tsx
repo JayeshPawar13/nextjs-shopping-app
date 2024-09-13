@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Product } from "./products/products.interface";
 
 async function getProducts() {
-  const products = await fetch("http://localhost:3000/api/products");
+  const products = await fetch(`${process.env.BASE_URL}/api/products`);
 
   return products.json();
 }

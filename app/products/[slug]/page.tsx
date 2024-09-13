@@ -1,5 +1,5 @@
 async function getProduct(id: string) {
-  const products = await fetch(`http://localhost:3000/api/products?id=${id}`);
+  const products = await fetch(`${process.env.BASE_URL}/api/products?id=${id}`);
 
   return products.json();
 }

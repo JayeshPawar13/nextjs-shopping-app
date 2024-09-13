@@ -3,7 +3,7 @@ import { Product } from "./products.interface";
 import { title } from "@/components/primitives";
 import ProductCard from "@/components/product-card";
 async function getProducts() {
-  const products = await fetch("http://localhost:3000/api/products");
+  const products = await fetch(`${process.env.BASE_URL}/api/products`);
 
   return products.json();
 }
