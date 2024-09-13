@@ -7,7 +7,7 @@ module.exports = (phase) => {
         mongodb_password: "lQZwniM4j3QhemVD",
         mongodb_clustername: "cluster0",
         mongodb_database: "shopping-app",
-        BASE_URL: "http://localhost:3000",
+        BASE_URL: window.location.origin,
       },
     };
   }
@@ -18,7 +18,7 @@ module.exports = (phase) => {
       mongodb_password: "lQZwniM4j3QhemVD",
       mongodb_clustername: "cluster0",
       mongodb_database: "shopping-app",
-      BASE_URL: "http://localhost:3000",
+      BASE_URL: window.location.origin,
     },
   };
 };
