@@ -1,19 +1,19 @@
 "use client";
 import { Card, Button, CardHeader } from "@nextui-org/react";
 import Image from "next/image"; // Or use <img> if not using Next.js
-import Rating from "./rating";
 import Link from "next/link";
+
+import Rating from "./rating";
+
 import { Product } from "@/app/products/products.interface";
 
 const ProductList = ({ products }: { products: Product[] }) => {
-  console.log(products);
-
   return (
     <div className="flex flex-wrap gap-8 px-8">
       {products.map((product) => (
-        <Link key={product._id} href={`/products/${product._id}`}>
+        <Link key={product._id.toString()} href={`/products/${product._id}`}>
           <Card
-            key={product._id}
+            key={product._id.toString()}
             isFooterBlurred
             isHoverable
             className="w-[300px] h-[300px] flex flex-col relative transform transition-transform duration-300 hover:scale-110"
@@ -29,9 +29,9 @@ const ProductList = ({ products }: { products: Product[] }) => {
             <Image
               alt="Card example background"
               className="z-0 w-full h-full scale-125 -translate-y-6 object-cover transform transition-transform duration-300 hover:scale-150"
+              height={200}
               src={`/images/${product.image}`}
               width={300}
-              height={200}
             />
             <div className="absolute bottom-0 w-full bg-white/80 border-t border-zinc-100/50 z-10 flex justify-between items-center p-2">
               <div>
@@ -49,10 +49,10 @@ const ProductList = ({ products }: { products: Product[] }) => {
               >
                 Add to Cart
                 <Image
+                  alt="cart image"
+                  height={18}
                   src="/icons/cart.svg"
                   width={18}
-                  height={18}
-                  alt="cart image"
                 />
               </Button>
             </div>

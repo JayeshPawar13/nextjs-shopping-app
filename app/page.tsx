@@ -1,14 +1,16 @@
 import Image from "next/image";
 import { Product } from "./products/products.interface";
+import { connectToDatabase } from "@/lib/mongodb";
 
 async function getProducts() {
-  const products = await fetch(`${process.env.BASE_URL}/api/products`);
+  const client = await connectToDatabase();
+  const collection = client.db().collection("products");
 
-  return products.json();
+  return await collection?.find({}).toArray();
 }
 
 export default async function Home() {
-  const products: Product[] = await getProducts();
+  const products = (await getProducts()) as Product[];
 
   const getRandomFloatStyle = () => {
     const randomDuration = (Math.random() * 3 + 2).toFixed(2);
@@ -28,8 +30,8 @@ export default async function Home() {
           const isSmall = index % 2 === 0;
           const isElongated = index === 1;
 
-          const width = isSmall ? 150 : isElongated ? 250 : 200;
-          const height = isSmall ? 150 : isElongated ? 240 : 200;
+          const width = isSmall ? 200 : isElongated ? 250 : 200;
+          const height = isSmall ? 200 : isElongated ? 240 : 200;
 
           return (
             <div
@@ -38,12 +40,12 @@ export default async function Home() {
               style={{
                 width: `${width}px`,
                 height: `${height}px`,
-                ...getRandomFloatStyle(), // Apply random floating effect
+                ...getRandomFloatStyle(),
               }}
             >
               <Image
                 alt={image.name}
-                className="object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-110"
+                className="object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-130"
                 height={height}
                 src={`/images/${image.image}`}
                 width={width}
