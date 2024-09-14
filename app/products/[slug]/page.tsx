@@ -1,12 +1,10 @@
 "use client";
-import { ObjectId } from "mongodb";
 import Image from "next/image";
+import { Card } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 
 import { Product } from "../products.interface";
 
-import { connectToDatabase } from "@/lib/mongodb";
-import { Card } from "@nextui-org/react";
-import { useEffect, useState } from "react";
 import Rating from "@/components/rating";
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
@@ -16,6 +14,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     const fetchData = async () => {
       const response = await fetch(`/api/products?id=${params.slug}`);
       const productResp = await response.json();
+
       setProduct(productResp[0]);
 
       console.log(product);
@@ -25,18 +24,21 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   }, [params]);
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-800 py-8">
+    <div className="bg-gray-100 dark:bg-gray-800 py-8 rounded-large">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row -mx-4">
+          Suspense
           <div className="md:flex-1 px-4">
-            <Card>
-              <Image
-                alt={product?.name ? product.name : "Product Image"}
-                className="object-cover"
-                height={200}
-                src={`/images/${product?.image}`}
-                width={600}
-              />
+            <Card className="w-fit ml-auto mr-auto">
+              {product ? (
+                <Image
+                  alt={product?.name ? product.name : "Product Image"}
+                  className="object-cover"
+                  height={100}
+                  src={`/images/${product?.image}`}
+                  width={300}
+                />
+              ) : null}
             </Card>
             <div className="flex -mx-2 mb-4 pt-4">
               <div className="w-1/2 px-2">

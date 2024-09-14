@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { connectToDatabase } from "@/lib/mongodb";
 import { MongoClient, ObjectId } from "mongodb";
+import clientPromise from "@/lib/mongodb";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
 
-  const client = await connectToDatabase();
+  const client = await clientPromise;
   const collection = (client as MongoClient)?.db().collection("products");
   let products;
 
