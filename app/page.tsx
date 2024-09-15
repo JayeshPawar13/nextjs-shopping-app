@@ -6,7 +6,17 @@ import clientPromise from "@/lib/mongodb";
 
 async function getProducts() {
   const client = await clientPromise;
-  const collection = client.db().collection("products");
+  const collection = client
+    .db(process.env.mongodb_database)
+    .collection("products");
+
+  const userCollection = client
+    .db(process.env.mongodb_user_database)
+    .collection("shopping-app-user");
+
+  const res = await userCollection?.find({}).toArray();
+
+  console.log(res);
 
   return await collection?.find({}).toArray();
 }
@@ -58,7 +68,6 @@ export default async function Home() {
         })}
       </div>
 
-      {/* Tailwind CSS custom floating animation */}
       <style>{`
         @keyframes float {
           0% {

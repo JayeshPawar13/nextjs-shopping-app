@@ -9,19 +9,19 @@ export async function GET(request: NextRequest) {
 
   const client = await clientPromise;
   const collection = (client as MongoClient)
-    ?.db(process.env.mongodb_database)
-    .collection("products");
-  let products;
+    ?.db(process.env.mongodb_user_database)
+    .collection("shopping-app-user");
+  let user;
 
   if (id) {
-    products = await collection?.findOne({ _id: new ObjectId(id) });
-    products = new Array(products);
+    user = await collection?.findOne({ _id: new ObjectId(id) });
+    user = new Array(user);
   } else {
-    products = await collection?.find({}).toArray();
+    user = await collection?.find({}).toArray();
   }
 
   try {
-    return NextResponse.json(products, {
+    return NextResponse.json(user, {
       status: 200,
     });
   } catch (error) {

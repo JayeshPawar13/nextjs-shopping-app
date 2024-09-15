@@ -5,7 +5,9 @@ import ProductCard from "@/components/product-card";
 import clientPromise from "@/lib/mongodb";
 async function getProducts() {
   const client = await clientPromise;
-  const collection = client.db().collection("products");
+  const collection = client
+    .db(process.env.mongodb_database)
+    .collection("products");
 
   return await collection?.find({}).toArray();
 }
