@@ -4,6 +4,10 @@ import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
 import { Spinner } from "@nextui-org/spinner";
 import { useEffect, useState } from "react";
+import { ButtonGroup } from "@nextui-org/react";
+import { MdDeleteOutline } from "react-icons/md";
+import { AiOutlineMinus } from "react-icons/ai";
+import { AiOutlinePlus } from "react-icons/ai";
 
 import { Product } from "../products.interface";
 
@@ -73,7 +77,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     if (cartResp) setCart(obj);
   };
 
-  const AddToCart = () => {
+  const addToCart = () => {
     setLoading(true);
     let cartObj = cart;
 
@@ -82,6 +86,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     if (user && product) {
       if (cart) {
         cartObj = { ...cart };
+        console.log(cartObj);
 
         if (cartObj.items) {
           const item = cartObj.items.find(
@@ -108,6 +113,45 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     console.log(cartObj);
   };
 
+  const removeFromCart = () => {
+    setLoading(true);
+    const cartObj = cart;
+
+    if (cartObj && cartObj.items) {
+      const item = cartObj.items.find(
+        (item) => item.productId === product?._id
+      );
+
+      if (item) {
+        item.quantity -= 1;
+      }
+      updateCartHandler(cartObj);
+    }
+  };
+
+  const checkIfProductInCart = () => {
+    if (cart) {
+      const item = cart.items.find((item) => item.productId === product?._id);
+
+      if (item) return true;
+
+      return false;
+    }
+
+    return false;
+  };
+
+  const getProductLengthFromCart = () => {
+    if (cart) {
+      return (
+        cart.items.find((item) => item.productId === product?._id)?.quantity ||
+        0
+      );
+    }
+
+    return 0;
+  };
+
   useEffect(() => {
     fetchProduct();
     fetchUser();
@@ -132,36 +176,71 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 <Spinner />
               )}
             </Card>
-            <div className="flex -mx-2 mb-4 pt-4">
-              <div className="w-1/2 px-2">
-                <Button
-                  className="w-full font-bold py-2 px-4 text-800 transform transition-transform duration-300 hover:scale-110"
-                  color="primary"
-                  radius="full"
-                  size="lg"
-                  onClick={() => console.log("Add to wishlist")}
-                >
-                  Add to Wishlist
-                </Button>
-              </div>
-              <div className="w-1/2 px-2 flex justify-center">
-                <Button
-                  className="w-full font-bold py-2 px-4 text-800 transform transition-transform duration-300 hover:scale-110"
-                  color="primary"
-                  isLoading={loading}
-                  radius="full"
-                  size="lg"
-                  onClick={AddToCart}
-                >
-                  Add to Cart
-                  <Image
-                    alt="cart image"
-                    height={18}
-                    priority={true}
-                    src="/icons/cart.svg"
-                    width={18}
-                  />
-                </Button>
+            <div className="flex -mx-2 mb-4 pt-4 justify-center">
+              <div className="w-1/2 px-2 justify-center">
+                {checkIfProductInCart() ? (
+                  <ButtonGroup>
+                    <Button
+                      isIconOnly
+                      className="w-full font-bold py-2 px-4 text-800"
+                      color="danger"
+                      isLoading={loading}
+                      radius="full"
+                      size="lg"
+                      startContent={<MdDeleteOutline />}
+                      variant="bordered"
+                      onClick={() => console.log("Remove from cart")}
+                    />
+                    <Button
+                      isIconOnly
+                      className="w-full font-bold py-2 px-4 text-800"
+                      color="primary"
+                      isLoading={loading}
+                      radius="full"
+                      size="lg"
+                      startContent={<AiOutlineMinus />}
+                      onClick={() => console.log("Remove from cart")}
+                    />
+                    <Button
+                      className="w-full font-bold py-2 px-4 text-800 pointer-events-none"
+                      color="primary"
+                      radius="full"
+                      size="lg"
+                      onClick={() => console.log("Remove from cart")}
+                    >
+                      {getProductLengthFromCart()}
+                    </Button>
+                    <Button
+                      className="w-full font-bold py-2 px-4 text-800"
+                      color="primary"
+                      isLoading={loading}
+                      radius="full"
+                      size="lg"
+                      startContent={<AiOutlinePlus />}
+                      onClick={addToCart}
+                    />
+                  </ButtonGroup>
+                ) : (
+                  <Button
+                    className="w-full font-bold py-2 px-4 text-800"
+                    color="primary"
+                    endContent={
+                      <Image
+                        alt="cart image"
+                        height={18}
+                        priority={true}
+                        src="/icons/cart.svg"
+                        width={18}
+                      />
+                    }
+                    isLoading={loading}
+                    radius="full"
+                    size="lg"
+                    onClick={addToCart}
+                  >
+                    Add to Cart
+                  </Button>
+                )}
               </div>
             </div>
           </div>

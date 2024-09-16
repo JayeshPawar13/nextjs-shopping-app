@@ -46,7 +46,10 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2 transform transition-transform duration-300 hover:scale-110">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
+          <NextLink
+            className="flex justify-start items-center gap-1"
+            href="/cart"
+          >
             <Image
               alt="cart image"
               height={18}
