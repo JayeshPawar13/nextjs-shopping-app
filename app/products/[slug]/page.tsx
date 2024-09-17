@@ -6,7 +6,17 @@ import { Product } from "../products.interface";
 
 import Rating from "@/components/rating";
 import CartActions from "@/components/cartActions";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
+async function getProducts(slug: string) {
+  const client = await clientPromise;
+  const collection = client
+    .db(process.env.mongodb_database)
+    .collection<Product>("products");
+
+  return await collection?.findOne({ _id: new ObjectId(slug) });
+}
 export default async function ProductPage({
   params,
 }: {
@@ -14,15 +24,9 @@ export default async function ProductPage({
 }) {
   const { slug } = params;
 
-  const response = await fetch(
-    `${process.env.API_URL}/api/products?id=${slug}`,
-    {
-      cache: "no-store",
-    }
-  );
-  const productResp = await response.json();
+  const productResp = await getProducts(slug);
 
-  const product: Product | null = productResp[0] || null;
+  const product: Product | null = productResp || null;
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 py-8 rounded-large min-h-full">
