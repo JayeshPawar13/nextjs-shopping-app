@@ -27,7 +27,7 @@ export const CartItem = ({
   return (
     <Card className="mb-4">
       <div className="p-4">
-        <p>{product?.title}</p>
+        <p>{product?.name}</p>
         <div className="flex justify-between items-center">
           <div className="flex justify-between gap-4 mt-2">
             <Image
