@@ -6,17 +6,9 @@ import { Product } from "../products.interface";
 
 import Rating from "@/components/rating";
 import CartActions from "@/components/cartActions";
-import clientPromise from "@/lib/mongodb";
-import { ObjectId } from "mongodb";
 
-async function getProducts(slug: string) {
-  const client = await clientPromise;
-  const collection = client
-    .db(process.env.mongodb_database)
-    .collection<Product>("products");
+import { getProduct } from "@/lib/utils";
 
-  return await collection?.findOne({ _id: new ObjectId(slug) });
-}
 export default async function ProductPage({
   params,
 }: {
@@ -24,7 +16,7 @@ export default async function ProductPage({
 }) {
   const { slug } = params;
 
-  const productResp = await getProducts(slug);
+  const productResp = await getProduct(slug);
 
   const product: Product | null = productResp || null;
 
