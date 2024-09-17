@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { Spacer } from "@nextui-org/spacer";
 import { ObjectId } from "mongodb";
 import Image from "next/image";
-
+import { title } from "@/components/primitives";
 import { Cart } from "../cart.interface";
 import { User } from "../user.interface";
 import { Product } from "../products/products.interface";
 
-export const CartItem = ({
+const CartItem = ({
   item,
   product,
   onRemove,
@@ -27,7 +27,6 @@ export const CartItem = ({
   return (
     <Card className="mb-4">
       <div className="p-4">
-        <p>{product?.name}</p>
         <div className="flex justify-between items-center">
           <div className="flex justify-between gap-4 mt-2">
             <Image
@@ -54,13 +53,15 @@ export const CartItem = ({
 
 export default function CartPage() {
   const [cart, setCart] = useState<Cart>();
-  const [user, setUser] = useState<User>();
   const [cartProducts, setCartProducts] = useState<Map<string, Product>>();
   const fetchCart = async () => {
     const cartResponse = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`);
     const cartResp = await cartResponse.json();
+    const priceForProducts = cartResp[0]?.items
+      .map((item: { productId: string; quantity: number }) => item.productId)
+      .join(",");
     const prodResponse = await fetch(
-      `/api/products?id=66e5e9e5f1bb7da2963ec428&priceForProducts=${cartResp[0]?.items.map((item) => item.productId).join(",")}`
+      `/api/products?id=66e5e9e5f1bb7da2963ec428&priceForProducts=${priceForProducts}`
     );
     const prodResp: Product[] = await prodResponse.json();
 
@@ -71,7 +72,6 @@ export default function CartPage() {
     prodResp.forEach((product) =>
       productMap.set(product._id.toString(), product)
     );
-    console.log(productMap);
 
     setCartProducts(productMap);
   };
@@ -114,34 +114,38 @@ export default function CartPage() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto mt-8 p-4">
-      <h2 className="text-center mb-6">Cart</h2>
-      {cart && cartProducts ? (
-        cart?.items.length > 0 ? (
-          cart?.items.map((item) => (
-            <CartItem
-              key={item.productId.toString()}
-              item={item}
-              product={cartProducts?.get(item.productId.toString())}
-              onRemove={() => removeItem(item.productId.toString())}
-            />
-          ))
-        ) : (
-          <p className="text-center text-lg">Your cart is empty.</p>
-        )
-      ) : null}
-
-      <Spacer y={2} />
-      <div className="flex justify-between items-center">
-        <h3>Total: ₹{total}</h3>
-        <Button
-          className="text-lg"
-          color="success"
-          disabled={cart?.items.length === 0}
-        >
-          Proceed to Checkout
-        </Button>
+    <>
+      <div className="flex justify-center">
+        <h1 className={title()}>Cart</h1>
       </div>
-    </div>
+      <div className="max-w-2xl mx-auto mt-8 p-4">
+        {cart && cartProducts ? (
+          cart?.items.length > 0 ? (
+            cart?.items.map((item) => (
+              <CartItem
+                key={item.productId.toString()}
+                item={item}
+                product={cartProducts?.get(item.productId.toString())}
+                onRemove={() => removeItem(item.productId.toString())}
+              />
+            ))
+          ) : (
+            <p className="text-center text-lg">Your cart is empty.</p>
+          )
+        ) : null}
+
+        <Spacer y={2} />
+        <div className="flex justify-between items-center">
+          <h3>Total: ₹{total}</h3>
+          <Button
+            className="text-lg"
+            color="success"
+            disabled={cart?.items.length === 0}
+          >
+            Proceed to Checkout
+          </Button>
+        </div>
+      </div>
+    </>
   );
 }
