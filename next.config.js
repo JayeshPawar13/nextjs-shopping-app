@@ -7,6 +7,8 @@ module.exports = (phase) => {
         mongodb_password: "lQZwniM4j3QhemVD",
         mongodb_clustername: "cluster0",
         mongodb_database: "shopping-app",
+        mongodb_user_database: "user",
+        API_URL: "http://localhost:3000",
       },
     };
   }
@@ -17,6 +19,8 @@ module.exports = (phase) => {
       mongodb_password: "lQZwniM4j3QhemVD",
       mongodb_clustername: "cluster0",
       mongodb_database: "shopping-app",
+      mongodb_user_database: "user",
+      API_URL: "http://localhost:3000",
     },
   };
 };

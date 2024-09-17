@@ -2,19 +2,25 @@ import { Product } from "./products.interface";
 
 import { title } from "@/components/primitives";
 import ProductCard from "@/components/product-card";
+import clientPromise from "@/lib/mongodb";
 async function getProducts() {
-  const products = await fetch("http://localhost:3000/api/products");
+  const client = await clientPromise;
+  const collection = client
+    .db(process.env.mongodb_database)
+    .collection<Product>("products");
 
-  return products.json();
+  return await collection?.find({}).toArray();
 }
 export default async function ProductsPage() {
-  const products: Product[] = await getProducts();
+  const products = await getProducts();
+
+  if (!products) throw new Error("Products not found");
 
   return (
     <>
       <h1 className={title()}>Products</h1>
       <div className="mt-4">
-        <ProductCard products={products} />
+        <ProductCard products={JSON.parse(JSON.stringify(products))} />
       </div>
     </>
   );
