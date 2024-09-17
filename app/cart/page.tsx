@@ -3,12 +3,12 @@ import { Card } from "@nextui-org/card";
 import { Button } from "@nextui-org/button";
 import { useEffect, useState } from "react";
 import { Spacer } from "@nextui-org/spacer";
+import { ObjectId } from "mongodb";
+import Image from "next/image";
 
 import { Cart } from "../cart.interface";
 import { User } from "../user.interface";
 import { Product } from "../products/products.interface";
-import { ObjectId } from "mongodb";
-import Image from "next/image";
 
 export const CartItem = ({
   item,
@@ -43,7 +43,7 @@ export const CartItem = ({
               <p>Quantity: {item.quantity}</p>
             </div>
           </div>
-          <Button className="text-xs" onClick={() => console.log("Remove")}>
+          <Button className="text-xs" onClick={() => onRemove()}>
             Remove
           </Button>
         </div>
@@ -76,13 +76,34 @@ export default function CartPage() {
     setCartProducts(productMap);
   };
 
+  const deleteCartHandler = async (obj: Cart, productId: string) => {
+    const response = await fetch(
+      `/api/cart?id=66e5e9e5f1bb7da2963ec428&productId=${productId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    const cartResp = await response.json();
+
+    if (cartResp) setCart(obj);
+  };
+
   useEffect(() => {
     fetchCart();
   }, []);
 
-  //   const removeItem = (id) => {
-  //     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  //   };
+  const removeItem = (productId: string) => {
+    // setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+
+    if (cart) {
+      const cartObj = { ...cart };
+
+      cartObj.items = cartObj.items.filter(
+        (item) => item.productId !== productId
+      );
+      deleteCartHandler(cartObj, productId);
+    }
+  };
 
   const total = cart?.items.reduce(
     (acc, item) =>
@@ -102,7 +123,7 @@ export default function CartPage() {
               key={item.productId.toString()}
               item={item}
               product={cartProducts?.get(item.productId.toString())}
-              onRemove={() => console.log("Remove")}
+              onRemove={() => removeItem(item.productId.toString())}
             />
           ))
         ) : (

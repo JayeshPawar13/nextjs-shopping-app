@@ -7,12 +7,12 @@ async function getProducts() {
   const client = await clientPromise;
   const collection = client
     .db(process.env.mongodb_database)
-    .collection("products");
+    .collection<Product>("products");
 
   return await collection?.find({}).toArray();
 }
 export default async function ProductsPage() {
-  const products = (await getProducts()) as Product[];
+  const products = await getProducts();
 
   if (!products) throw new Error("Products not found");
 

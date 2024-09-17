@@ -1,162 +1,28 @@
-"use client";
 import Image from "next/image";
-import { Button } from "@nextui-org/button";
 import { Card } from "@nextui-org/card";
 import { Spinner } from "@nextui-org/spinner";
-import { useEffect, useState } from "react";
-import { ButtonGroup } from "@nextui-org/react";
-import { MdDeleteOutline } from "react-icons/md";
-import { AiOutlineMinus } from "react-icons/ai";
-import { AiOutlinePlus } from "react-icons/ai";
 
 import { Product } from "../products.interface";
 
 import Rating from "@/components/rating";
-import { User } from "@/app/user.interface";
-import { Cart } from "@/app/cart.interface";
+import CartActions from "@/components/cartActions";
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const [product, setProduct] = useState<Product>();
-  const [cart, setCart] = useState<Cart>();
-  const [user, setUser] = useState<User>();
-  const [loading, setLoading] = useState<boolean>(false);
+export default async function ProductPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = params;
 
-  const fetchProduct = async () => {
-    const response = await fetch(`/api/products?id=${params.slug}`);
-    const productResp = await response.json();
-
-    setProduct(productResp[0]);
-
-    console.log(productResp);
-  };
-
-  const fetchUser = async () => {
-    const response = await fetch(`/api/user?id=66e5e9e5f1bb7da2963ec428`);
-    const userResp = await response.json();
-
-    setUser(userResp[0]);
-
-    console.log(user);
-  };
-
-  const fetchCart = async () => {
-    const response = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`);
-    const cartResp = await response.json();
-
-    setCart(cartResp[0]);
-
-    console.log(cart);
-  };
-
-  const addToCartHandler = async (obj: Cart) => {
-    const response = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(obj),
-    });
-    const cartResp = await response.json();
-
-    if (cartResp) setCart(obj);
-    setLoading(false);
-    console.log(cart);
-  };
-
-  const updateCartHandler = async (obj: Cart) => {
-    const response = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(obj),
-    });
-    const cartResp = await response.json();
-
-    setLoading(false);
-    if (cartResp) setCart(obj);
-  };
-
-  const addToCart = () => {
-    setLoading(true);
-    let cartObj = cart;
-
-    console.log(product, user);
-
-    if (user && product) {
-      if (cart) {
-        cartObj = { ...cart };
-        console.log(cartObj);
-
-        if (cartObj.items) {
-          const item = cartObj.items.find(
-            (item) => item.productId === product._id
-          );
-
-          if (item) {
-            item.quantity += 1;
-          } else {
-            cartObj.items.push({ productId: product._id, quantity: 1 });
-          }
-        } else {
-          cartObj.items = [{ productId: product._id, quantity: 1 }];
-        }
-        updateCartHandler(cartObj);
-      } else {
-        cartObj = {
-          userId: user._id,
-          items: [{ productId: product._id, quantity: 1 }],
-        };
-        addToCartHandler(cartObj);
-      }
+  const response = await fetch(
+    `${process.env.API_URL}/api/products?id=${slug}`,
+    {
+      cache: "no-store",
     }
-    console.log(cartObj);
-  };
+  );
+  const productResp = await response.json();
 
-  const removeFromCart = () => {
-    setLoading(true);
-    const cartObj = cart;
-
-    if (cartObj && cartObj.items) {
-      const item = cartObj.items.find(
-        (item) => item.productId === product?._id
-      );
-
-      if (item) {
-        item.quantity -= 1;
-      }
-      updateCartHandler(cartObj);
-    }
-  };
-
-  const checkIfProductInCart = () => {
-    if (cart) {
-      const item = cart.items.find((item) => item.productId === product?._id);
-
-      if (item) return true;
-
-      return false;
-    }
-
-    return false;
-  };
-
-  const getProductLengthFromCart = () => {
-    if (cart) {
-      return (
-        cart.items.find((item) => item.productId === product?._id)?.quantity ||
-        0
-      );
-    }
-
-    return 0;
-  };
-
-  useEffect(() => {
-    fetchProduct();
-    fetchUser();
-    fetchCart();
-  }, [params]);
+  const product: Product | null = productResp[0] || null;
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 py-8 rounded-large min-h-full">
@@ -177,71 +43,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               )}
             </Card>
             <div className="flex -mx-2 mb-4 pt-4 justify-center">
-              <div className="w-1/2 px-2 justify-center">
-                {checkIfProductInCart() ? (
-                  <ButtonGroup>
-                    <Button
-                      isIconOnly
-                      className="w-full font-bold py-2 px-4 text-800"
-                      color="danger"
-                      isLoading={loading}
-                      radius="full"
-                      size="lg"
-                      startContent={<MdDeleteOutline />}
-                      variant="bordered"
-                      onClick={() => console.log("Remove from cart")}
-                    />
-                    <Button
-                      isIconOnly
-                      className="w-full font-bold py-2 px-4 text-800"
-                      color="primary"
-                      isLoading={loading}
-                      radius="full"
-                      size="lg"
-                      startContent={<AiOutlineMinus />}
-                      onClick={() => console.log("Remove from cart")}
-                    />
-                    <Button
-                      className="w-full font-bold py-2 px-4 text-800 pointer-events-none"
-                      color="primary"
-                      radius="full"
-                      size="lg"
-                      onClick={() => console.log("Remove from cart")}
-                    >
-                      {getProductLengthFromCart()}
-                    </Button>
-                    <Button
-                      className="w-full font-bold py-2 px-4 text-800"
-                      color="primary"
-                      isLoading={loading}
-                      radius="full"
-                      size="lg"
-                      startContent={<AiOutlinePlus />}
-                      onClick={addToCart}
-                    />
-                  </ButtonGroup>
-                ) : (
-                  <Button
-                    className="w-full font-bold py-2 px-4 text-800"
-                    color="primary"
-                    endContent={
-                      <Image
-                        alt="cart image"
-                        height={18}
-                        priority={true}
-                        src="/icons/cart.svg"
-                        width={18}
-                      />
-                    }
-                    isLoading={loading}
-                    radius="full"
-                    size="lg"
-                    onClick={addToCart}
-                  >
-                    Add to Cart
-                  </Button>
-                )}
-              </div>
+              {product && <CartActions product={product} />}
             </div>
           </div>
 

@@ -8,21 +8,13 @@ async function getProducts() {
   const client = await clientPromise;
   const collection = client
     .db(process.env.mongodb_database)
-    .collection("products");
-
-  const userCollection = client
-    .db(process.env.mongodb_user_database)
-    .collection("shopping-app-user");
-
-  const res = await userCollection?.find({}).toArray();
-
-  console.log(res);
+    .collection<Product>("products");
 
   return await collection?.find({}).toArray();
 }
 
 export default async function Home() {
-  const products = (await getProducts()) as Product[];
+  const products = await getProducts();
 
   const getRandomFloatStyle = () => {
     const randomDuration = (Math.random() * 3 + 2).toFixed(2);

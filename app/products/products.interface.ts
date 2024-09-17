@@ -1,6 +1,5 @@
-import { WithId } from "mongodb";
-
-export interface Product extends WithId<Document> {
+export interface Product {
+  _id: string;
   id: number;
   name: string;
   price: string;

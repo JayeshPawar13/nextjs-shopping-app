@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { MongoClient, ObjectId } from "mongodb";
 
 import clientPromise from "@/lib/mongodb";
+import { Cart } from "@/app/cart.interface";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -95,5 +96,49 @@ export async function PUT(request: NextRequest) {
       { status: 500 }
     );
   } finally {
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id");
+  const productId = url.searchParams.get("productId");
+
+  console.log("in delete", id, productId);
+
+  const client = await clientPromise;
+  const collection = (client as MongoClient)
+    ?.db(process.env.mongodb_database)
+    .collection<Cart>("cart");
+
+  let cart = null;
+
+  try {
+    if (!id || !productId) {
+      return NextResponse.json(
+        { error: "Missing id or productId" },
+        { status: 400 }
+      );
+    }
+
+    const result = await collection.updateOne(
+      { userId: id },
+      { $pull: { items: { productId: productId } } }
+    );
+
+    if (result.acknowledged && result.modifiedCount > 0) {
+      cart = { success: true, message: "Item removed successfully" };
+    } else {
+      cart = { success: false, message: "No item removed" };
+    }
+
+    return NextResponse.json(cart, { status: 200 });
+  } catch (error) {
+    console.error("Error during delete operation:", error);
+
+    return NextResponse.json(
+      { error: "Failed to delete item", details: error },
+      { status: 500 }
+    );
   }
 }

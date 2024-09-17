@@ -1,9 +1,9 @@
 import { Card, CardHeader } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
 import Image from "next/image"; // Or use <img> if not using Next.js
 import Link from "next/link";
 
 import Rating from "./rating";
+import CartActions from "./cartActions";
 
 import { Product } from "@/app/products/products.interface";
 
@@ -46,20 +46,7 @@ const ProductList = ({ products }: { products: Product[] }) => {
                 <p className="text-black text-sm">{product.price}</p>
                 <Rating value={product.rating} />
               </div>
-              <Button
-                className="text-xs  transform transition-transform duration-300 hover:scale-110"
-                color="primary"
-                radius="full"
-                size="sm"
-              >
-                Add to Cart
-                <Image
-                  alt="cart image"
-                  height={18}
-                  src="/icons/cart.svg"
-                  width={18}
-                />
-              </Button>
+              <CartActions hideDelete={true} product={product} />
             </div>
           </Card>
         </Link>
