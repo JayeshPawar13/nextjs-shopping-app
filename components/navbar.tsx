@@ -1,3 +1,4 @@
+"use client";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -8,11 +9,14 @@ import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/icons";
 
 export const Navbar = () => {
+  const router = useRouter();
+
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -26,13 +30,13 @@ export const Navbar = () => {
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <NextLink
-                prefetch={true}
                 className={clsx(
                   linkStyles({ color: "foreground" }),
                   "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={item.href}
+                onClick={() => router.refresh()}
               >
                 {item.label}
               </NextLink>

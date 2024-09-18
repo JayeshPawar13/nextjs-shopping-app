@@ -1,55 +1,37 @@
 "use client";
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { Button, ButtonGroup } from "@nextui-org/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { ObjectId } from "mongodb";
 
-import { Cart } from "@/app/cart.interface";
 import { User } from "@/app/user.interface";
 import { Product } from "@/app/products/products.interface";
+import { Cart } from "@/app/cart/cart.interface";
 
 interface CartActionsProps {
   product: Product;
   hideDelete?: boolean;
+  userInp?: User;
+  cartInp?: Cart;
+  onDelete?: Function;
+  onRemoveFromCart?: Function;
+  onAddToCart?: Function;
+  handleSetCart?: Function;
 }
 
 export default function CartActions({
   product,
   hideDelete = false,
+  userInp,
+  cartInp,
+  onDelete,
+  onRemoveFromCart,
+  onAddToCart,
+  handleSetCart,
 }: CartActionsProps) {
-  const [cart, setCart] = useState<Cart>();
-  const [user, setUser] = useState<User>();
-  const [loading, setLoading] = useState(false);
-
-  const fetchUser = async () => {
-    const response = await fetch(`/api/user?id=66e5e9e5f1bb7da2963ec428`);
-    const userResp = await response.json();
-
-    setUser(userResp[0]);
-  };
-
-  const fetchCart = async () => {
-    const response = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`);
-    const cartResp = await response.json();
-
-    setCart(cartResp[0]);
-  };
-
-  const addToCartHandler = async (obj: Cart) => {
-    const response = await fetch(`/api/cart?id=${user?._id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(obj),
-    });
-    const cartResp = await response.json();
-
-    if (cartResp) setCart(obj);
-    setLoading(false);
-  };
+  const [cart, setCart] = useState<Cart | undefined>(cartInp);
+  const [user, setUser] = useState<User | undefined>(userInp);
 
   const updateCartHandler = async (obj: Cart) => {
     const response = await fetch(`/api/cart?id=${user?._id}`, {
@@ -58,183 +40,169 @@ export default function CartActions({
         "Content-Type": "application/json",
       },
       body: JSON.stringify(obj),
+      cache: "no-store",
     });
     const cartResp = await response.json();
 
-    setLoading(false);
-    if (cartResp) setCart(obj);
+    if (cartResp) {
+      if (onAddToCart) onAddToCart();
+      setCart(obj);
+      if (handleSetCart) handleSetCart(obj);
+    }
   };
 
-  const deleteCartHandler = async (
-    obj: Cart,
-    deleteObj: { productId: ObjectId | string; quantity: number }
-  ) => {
+  const deleteCartHandler = async (obj: Cart, productId: string) => {
     const response = await fetch(
-      `/api/cart?id=${user?._id}&productId=${deleteObj.productId}`,
+      `/api/cart?id=${user?._id}&productId=${productId}`,
       {
         method: "DELETE",
+        cache: "no-store",
       }
     );
     const cartResp = await response.json();
 
-    setLoading(false);
-    if (cartResp) setCart(obj);
+    if (cartResp) {
+      setCart(obj);
+      if (onDelete) onDelete();
+      if (onRemoveFromCart) onRemoveFromCart();
+      if (handleSetCart) handleSetCart(obj);
+    }
   };
 
   const modifyCart = (operation: "add" | "remove" | "delete") => {
-    setLoading(true);
-    let cartObj = cart;
-
     if (user && product) {
-      if (cart) {
-        cartObj = { ...cart };
-        const item = cartObj.items.find(
-          (item) => item.productId === product._id
-        );
+      let cartObj = cart || {
+        userId: user._id,
+        items: [{ productId: product._id, quantity: 1 }],
+      };
 
-        if (item) {
-          if (operation === "add") {
-            item.quantity += 1;
-          } else if (operation === "remove") {
-            item.quantity -= 1;
-          } else {
-            cartObj.items = cartObj.items.filter(
-              (item) => item.productId !== product._id
-            );
-            deleteCartHandler(cartObj, item);
+      if (cart) cartObj = { ...cart };
+      const item = cartObj.items.find((item) => item.productId === product._id);
 
-            return;
-          }
+      if (item) {
+        if (operation === "add") {
+          item.quantity += 1;
+        } else if (operation === "remove") {
+          item.quantity -= 1;
         } else {
-          cartObj.items.push({ productId: product._id, quantity: 1 });
+          cartObj.items = cartObj.items.filter(
+            (item) => item.productId !== product._id
+          );
+          deleteCartHandler(cartObj, product._id.toString());
+
+          return;
         }
-        updateCartHandler(cartObj);
       } else {
-        cartObj = {
-          userId: user._id,
-          items: [{ productId: product._id, quantity: 1 }],
-        };
-        addToCartHandler(cartObj);
+        cartObj.items.push({ productId: product._id, quantity: 1 });
       }
+      updateCartHandler(cartObj);
     }
   };
 
   const checkIfProductInCart = () => {
-    if (cart) {
-      const item = cart.items.find((item) => item.productId === product._id);
-
-      return !!item;
-    }
-
-    return false;
+    return cart?.items.some((item) => item.productId === product._id);
   };
 
   const getProductLengthFromCart = () => {
-    if (cart) {
-      return (
-        cart.items.find((item) => item.productId === product._id)?.quantity || 0
-      );
-    }
-
-    return 0;
+    return (
+      cart?.items.find((item) => item.productId === product._id)?.quantity || 0
+    );
   };
 
-  useEffect(() => {
-    fetchUser();
-    fetchCart();
-  }, []);
-
   return (
-    <div className="flex justify-center">
-      {checkIfProductInCart() ? (
-        <ButtonGroup>
-          {getProductLengthFromCart() <= 1 && hideDelete ? (
-            <Button
-              className="font-bold py-2 px-4"
-              color="danger"
-              radius="full"
-              size="sm"
-              startContent={<MdDeleteOutline />}
-              variant="bordered"
-              onClick={(e) => {
-                modifyCart("delete");
-                e.preventDefault();
-              }}
-            />
-          ) : (
-            !hideDelete && (
+    <>
+      {cart && user && product && (
+        <div className="flex justify-center">
+          {checkIfProductInCart() ? (
+            <ButtonGroup>
+              {getProductLengthFromCart() <= 1 && hideDelete ? (
+                <Button
+                  className="font-bold py-2 px-4"
+                  color="danger"
+                  radius="full"
+                  size="sm"
+                  startContent={<MdDeleteOutline />}
+                  variant="bordered"
+                  onClick={(e) => {
+                    modifyCart("delete");
+                    e.preventDefault();
+                  }}
+                />
+              ) : (
+                !hideDelete && (
+                  <Button
+                    className="font-bold py-2 px-4"
+                    color="danger"
+                    radius="full"
+                    size="sm"
+                    startContent={<MdDeleteOutline />}
+                    variant="bordered"
+                    onClick={(e) => {
+                      modifyCart("delete");
+                      e.preventDefault();
+                    }}
+                  />
+                )
+              )}
+
+              {getProductLengthFromCart() > 1 && (
+                <Button
+                  className="font-bold py-2 px-4"
+                  color="primary"
+                  radius="full"
+                  size="sm"
+                  startContent={<AiOutlineMinus />}
+                  onClick={(e) => {
+                    modifyCart("remove");
+                    e.preventDefault();
+                  }}
+                />
+              )}
               <Button
-                className="font-bold py-2 px-4"
-                color="danger"
+                className="font-bold py-2 px-4 pointer-events-none"
+                color="primary"
                 radius="full"
                 size="sm"
-                startContent={<MdDeleteOutline />}
-                variant="bordered"
+              >
+                {getProductLengthFromCart()}
+              </Button>
+              <Button
+                className="font-bold py-2 px-4"
+                color="primary"
+                radius="full"
+                size="sm"
+                startContent={<AiOutlinePlus />}
                 onClick={(e) => {
-                  modifyCart("delete");
+                  modifyCart("add");
                   e.preventDefault();
                 }}
               />
-            )
-          )}
-
-          {getProductLengthFromCart() > 1 && (
+            </ButtonGroup>
+          ) : (
             <Button
               className="font-bold py-2 px-4"
               color="primary"
+              endContent={
+                <Image
+                  alt="cart image"
+                  height={18}
+                  priority={true}
+                  src="/icons/cart.svg"
+                  width={18}
+                />
+              }
               radius="full"
               size="sm"
-              startContent={<AiOutlineMinus />}
               onClick={(e) => {
-                modifyCart("remove");
+                modifyCart("add");
                 e.preventDefault();
               }}
-            />
+            >
+              Add to Cart
+            </Button>
           )}
-          <Button
-            className="font-bold py-2 px-4 pointer-events-none"
-            color="primary"
-            radius="full"
-            size="sm"
-          >
-            {getProductLengthFromCart()}
-          </Button>
-          <Button
-            className="font-bold py-2 px-4"
-            color="primary"
-            radius="full"
-            size="sm"
-            startContent={<AiOutlinePlus />}
-            onClick={(e) => {
-              modifyCart("add");
-              e.preventDefault();
-            }}
-          />
-        </ButtonGroup>
-      ) : (
-        <Button
-          className="font-bold py-2 px-4"
-          color="primary"
-          endContent={
-            <Image
-              alt="cart image"
-              height={18}
-              priority={true}
-              src="/icons/cart.svg"
-              width={18}
-            />
-          }
-          isLoading={loading}
-          radius="full"
-          size="sm"
-          onClick={(e) => {
-            modifyCart("add");
-            e.preventDefault();
-          }}
-        >
-          Add to Cart
-        </Button>
+        </div>
       )}
-    </div>
+    </>
   );
 }
