@@ -4,7 +4,7 @@ import clientPromise from "./mongodb";
 
 import { Product } from "@/app/products/products.interface";
 import { User } from "@/app/user.interface";
-import { Cart } from "@/app/cart.interface";
+import { Cart } from "@/app/cart/cart.interface";
 
 export async function getProduct(productId: string) {
   const client = await clientPromise;
