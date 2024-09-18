@@ -1,8 +1,8 @@
 "use client";
 import { Card, CardHeader } from "@nextui-org/card";
-import Image from "next/image"; // Or use <img> if not using Next.js
+import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Rating from "./rating";
 import CartActions from "./cartActions";
@@ -23,7 +23,6 @@ const ProductList = ({
     const cartResp = await response.json();
 
     setCartItems(cartResp[0]);
-    console.log(cartResp);
   };
 
   useEffect(() => {
@@ -66,7 +65,7 @@ const ProductList = ({
                   <h5 className="text-black font-medium text-lg">
                     {product.name}
                   </h5>
-                  <p className="text-black text-sm">{product.price}</p>
+                  <p className="text-black text-sm">₹{product.price}</p>
                   <Rating value={product.rating} />
                 </div>
 

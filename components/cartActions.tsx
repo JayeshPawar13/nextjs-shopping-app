@@ -1,14 +1,13 @@
-// cartActions.tsx
 "use client";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import { MdDeleteOutline } from "react-icons/md";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
-import { Cart } from "@/app/cart.interface";
 import { User } from "@/app/user.interface";
 import { Product } from "@/app/products/products.interface";
+import { Cart } from "@/app/cart/cart.interface";
 
 interface CartActionsProps {
   product: Product;

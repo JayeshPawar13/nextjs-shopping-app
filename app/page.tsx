@@ -1,17 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 
-import { Product } from "./products/products.interface";
-
-import clientPromise from "@/lib/mongodb";
-
-async function getProducts() {
-  const client = await clientPromise;
-  const collection = client
-    .db(process.env.mongodb_database)
-    .collection<Product>("products");
-
-  return await collection?.find({}).toArray();
-}
+import { getProducts } from "@/lib/utils";
+import { title } from "@/components/primitives";
 
 export default async function Home() {
   const products = await getProducts();
@@ -25,54 +16,45 @@ export default async function Home() {
   };
 
   return (
-    <div className="flex justify-around items-center p-10">
-      <h1 className="text-4xl font-bold text-center mb-10">
-        Elevate Your Everyday
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        {products.map((image, index) => {
-          const isSmall = index % 2 === 0;
-          const isElongated = index === 1;
-
-          const width = isSmall ? 200 : isElongated ? 250 : 200;
-          const height = isSmall ? 200 : isElongated ? 240 : 200;
+    <div className="flex flex-col items-center p-10">
+      <h1 className={title() + "text-center mb-10"}>Elevate Your Everyday</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((product, index) => {
+          const dimensions =
+            index === 1
+              ? { width: 250, height: 240 }
+              : { width: 200, height: 200 };
 
           return (
-            <div
-              key={image.id}
-              className="relative overflow-hidden rounded-lg shadow-lg group hover:shadow-2xl transition-shadow duration-500 ease-in-out"
-              style={{
-                width: `${width}px`,
-                height: `${height}px`,
-                ...getRandomFloatStyle(),
-              }}
+            <Link
+              key={product._id.toString()}
+              href={`/products/${product._id}`}
             >
-              <Image
-                alt={image.name}
-                className="object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-130"
-                height={height}
-                src={`/images/${image.image}`}
-                width={width}
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out" />
-            </div>
+              <div
+                className="relative overflow-hidden rounded-lg shadow-lg group hover:shadow-2xl transition-shadow duration-500 ease-in-out"
+                style={{
+                  width: `${dimensions.width}px`,
+                  height: `${dimensions.height}px`,
+                  ...getRandomFloatStyle(),
+                }}
+              >
+                <Image
+                  alt={product.name}
+                  className="object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-125"
+                  height={dimensions.height}
+                  src={`/images/${product.image}`}
+                  width={dimensions.width}
+                  quality={75}
+                  placeholder="blur"
+                  blurDataURL={`/images/${product.image}?w=10&q=10`}
+                  priority={index < 2}
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out" />
+              </div>
+            </Link>
           );
         })}
       </div>
-
-      <style>{`
-        @keyframes float {
-          0% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-          100% {
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }
