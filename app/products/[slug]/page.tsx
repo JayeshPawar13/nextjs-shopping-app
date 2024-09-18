@@ -66,7 +66,7 @@ export default async function ProductPage({
                   Price:
                 </span>
                 <span className="text-gray-600 dark:text-gray-300">
-                  ${product.price}
+                  ₹{product.price}
                 </span>
               </div>
               <div>
@@ -81,14 +81,12 @@ export default async function ProductPage({
                 Select Color:
               </span>
               <div className="flex items-center mt-2">
-                {["gray-800", "red-500", "blue-500", "yellow-500"].map(
-                  (color) => (
-                    <button
-                      key={color}
-                      className={`w-6 h-6 rounded-full bg-${color} dark:bg-${color}-700 mr-2`}
-                    />
-                  )
-                )}
+                {["gray", "green", "white"].map((color) => (
+                  <button
+                    key={color}
+                    className={`w-6 h-6 rounded-full bg-${color} dark:bg-${color}-700 mr-2`}
+                  />
+                ))}
               </div>
             </div>
             <div className="mb-4">

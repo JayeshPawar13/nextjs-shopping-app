@@ -44,13 +44,8 @@ const ProductList = ({
               isHoverable
               className="w-[300px] h-[300px] flex flex-col relative transform transition-transform duration-300 hover:scale-110"
             >
-              <CardHeader className="absolute z-10 top-1 flex-col items-start">
-                <p className="text-tiny text-black/60 uppercase font-bold">
-                  {product.isNew ? "New" : null}
-                </p>
-                <p className="text-tiny text-black/60 uppercase font-bold">
-                  {product.brand}
-                </p>
+              <CardHeader className="absolute z-10 top-0 flex-col items-start p-2">
+                {product.isNew ? "New" : null}
               </CardHeader>
               <Image
                 key={product._id.toString() + "image"}
@@ -62,6 +57,9 @@ const ProductList = ({
               />
               <div className="absolute bottom-0 w-full bg-white/80 border-t border-zinc-100/50 z-10 flex justify-between items-center p-2">
                 <div>
+                  <p className="text-tiny text-black/60 uppercase font-bold">
+                    {product.brand}
+                  </p>
                   <h5 className="text-black font-medium text-lg">
                     {product.name}
                   </h5>
