@@ -14,7 +14,7 @@ export default async function ProductsPage() {
       </div>
 
       <div className="mt-4">
-        <ProductCard products={products} user={user} />
+        <ProductCard productsData={products} userData={user} />
       </div>
     </>
   );

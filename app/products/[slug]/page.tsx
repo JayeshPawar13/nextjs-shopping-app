@@ -5,7 +5,7 @@ import { Spinner } from "@nextui-org/spinner";
 import Rating from "@/components/rating";
 import CartActions from "@/components/cartActions";
 
-import { getCart, getProduct, getUsers } from "@/lib/utils";
+import { getProduct } from "@/lib/utils";
 
 export default async function ProductPage({
   params,
@@ -14,11 +14,7 @@ export default async function ProductPage({
 }) {
   const { slug } = params;
 
-  const [product, user, cart] = await Promise.all([
-    getProduct(slug),
-    getUsers(),
-    getCart(),
-  ]);
+  const product = await getProduct(slug);
 
   if (!product) {
     return (
@@ -43,9 +39,7 @@ export default async function ProductPage({
               />
             </Card>
             <div className="flex -mx-2 mb-4 pt-4 justify-center">
-              {user && cart && (
-                <CartActions product={product} userInp={user} cartInp={cart} />
-              )}
+              <CartActions product={product} />
             </div>
           </div>
 

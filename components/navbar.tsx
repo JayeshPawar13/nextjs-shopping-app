@@ -13,9 +13,27 @@ import { useRouter } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 import { Logo } from "@/components/icons";
+import { useAppContext } from "@/app/providers";
+import { useEffect, useState } from "react";
 
 export const Navbar = () => {
   const router = useRouter();
+  const { cart } = useAppContext();
+  const totalQuantity = cart.items.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
+
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    setAnimate(true);
+    const timer = setTimeout(() => {
+      setAnimate(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [totalQuantity]);
 
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
@@ -49,7 +67,7 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <NavbarItem className="hidden sm:flex gap-2 transform transition-transform duration-300 hover:scale-110">
+        <NavbarItem className="relative flex gap-2 transform transition-transform duration-300 hover:scale-110">
           <NextLink
             className="flex justify-start items-center gap-1"
             href="/cart"
@@ -59,7 +77,21 @@ export const Navbar = () => {
               height={18}
               src="/icons/cart.svg"
               width={18}
+              className={clsx(
+                "transition-transform duration-300",
+                animate ? "scale-125" : "scale-100"
+              )}
             />
+            {totalQuantity > 0 && (
+              <span
+                className={`absolute -top-4 -right-0.5 bg-orange-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center ${clsx(
+                  "transition-transform duration-300",
+                  animate ? "scale-110" : "scale-100"
+                )}`}
+              >
+                {totalQuantity}
+              </span>
+            )}
           </NextLink>
         </NavbarItem>
       </NavbarContent>

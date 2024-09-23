@@ -8,25 +8,19 @@ import { Suspense, useEffect, useState, useMemo } from "react";
 
 import CartActions from "@/components/cartActions";
 import { Product } from "@/app/products/products.interface";
-import { User } from "@/app/user.interface";
-import { Cart } from "@/app/cart/cart.interface";
+import { useAppContext } from "@/app/providers";
 
-export default function CartListItems({
-  cart,
-  products,
-  user,
-}: {
-  cart?: Cart;
-  products: Product[];
-  user: User;
-}) {
-  const [cartItems, setCartItems] = useState<Cart | undefined>(cart);
+export default function CartListItems() {
+  const { cart, setCart } = useAppContext();
+  const { products } = useAppContext();
+  const { user } = useAppContext();
   const [total, setTotal] = useState(0);
 
   console.log("outside");
 
   const productMap = useMemo(() => {
     const map = new Map<string, Product>();
+
     console.log("memo");
 
     products.forEach((product) => map.set(product._id.toString(), product));
@@ -35,8 +29,8 @@ export default function CartListItems({
   }, [products]);
 
   useEffect(() => {
-    if (cartItems && productMap.size > 0) {
-      const newTotal = cartItems.items.reduce((acc, item) => {
+    if (cart && productMap.size > 0) {
+      const newTotal = cart.items.reduce((acc, item) => {
         const productPrice =
           productMap.get(item.productId.toString())?.price || 0;
 
@@ -45,7 +39,7 @@ export default function CartListItems({
 
       setTotal(newTotal);
     }
-  }, [cartItems, productMap]);
+  }, [cart, productMap]);
 
   const fetchCart = async () => {
     const response = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`, {
@@ -53,7 +47,7 @@ export default function CartListItems({
     });
     const cartResp = await response.json();
 
-    setCartItems(cartResp[0]);
+    setCart(cartResp[0]);
   };
 
   useEffect(() => {
@@ -62,16 +56,16 @@ export default function CartListItems({
 
   return (
     <>
-      {productMap.size > 0 && user && cartItems && (
+      {productMap.size > 0 && user && cart && (
         <>
           <div className="flex justify-center">
             <h1 className="text-3xl font-bold">Cart</h1>
           </div>
           <div className="max-w-2xl mx-auto mt-8 p-4">
-            {cartItems.items.length > 0 ? (
+            {cart.items.length > 0 ? (
               <>
                 <Suspense fallback={<Spinner />}>
-                  {cartItems.items.map((item, index) => {
+                  {cart.items.map((item, index) => {
                     const product = productMap.get(item.productId.toString());
 
                     return (
@@ -101,15 +95,13 @@ export default function CartListItems({
                               {product && (
                                 <CartActions
                                   product={product}
-                                  userInp={user}
-                                  cartInp={cartItems}
-                                  handleSetCart={setCartItems}
+                                  handleSetCart={setCart}
                                 />
                               )}
                             </div>
                           </div>
                         </Card>
-                        {index === cartItems.items.length - 1 && (
+                        {index === cart.items.length - 1 && (
                           <div className="flex justify-between items-center mt-4 p-4 bg-gradient-to-r from-blue-500 to-teal-800 rounded-lg shadow-lg">
                             <h3 className="text-white text-lg font-bold">
                               Total: <span className="text-2xl">₹{total}</span>
@@ -117,7 +109,7 @@ export default function CartListItems({
                             <Button
                               className="text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
                               color="success"
-                              disabled={cartItems.items.length === 0}
+                              disabled={cart.items.length === 0}
                             >
                               Proceed to Checkout
                             </Button>

@@ -8,12 +8,11 @@ import Image from "next/image";
 import { User } from "@/app/user.interface";
 import { Product } from "@/app/products/products.interface";
 import { Cart } from "@/app/cart/cart.interface";
+import { useAppContext } from "@/app/providers";
 
 interface CartActionsProps {
   product: Product;
   hideDelete?: boolean;
-  userInp?: User;
-  cartInp?: Cart;
   onDelete?: Function;
   onRemoveFromCart?: Function;
   onAddToCart?: Function;
@@ -23,15 +22,13 @@ interface CartActionsProps {
 export default function CartActions({
   product,
   hideDelete = false,
-  userInp,
-  cartInp,
   onDelete,
   onRemoveFromCart,
   onAddToCart,
   handleSetCart,
 }: CartActionsProps) {
-  const [cart, setCart] = useState<Cart | undefined>(cartInp);
-  const [user, setUser] = useState<User | undefined>(userInp);
+  const { cart, setCart } = useAppContext();
+  const { user } = useAppContext();
 
   const updateCartHandler = async (obj: Cart) => {
     const response = await fetch(`/api/cart?id=${user?._id}`, {

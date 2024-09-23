@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { Product } from "./products/products.interface";
+
 import { getProducts } from "@/lib/utils";
 import { title } from "@/components/primitives";
 
@@ -19,7 +21,7 @@ export default async function Home() {
     <div className="flex flex-col items-center p-10">
       <h1 className={title() + "text-center mb-10"}>Elevate Your Everyday</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product, index) => {
+        {products.map((product: Product, index: number) => {
           const dimensions =
             index === 1
               ? { width: 250, height: 240 }
