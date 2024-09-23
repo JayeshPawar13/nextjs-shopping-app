@@ -6,6 +6,21 @@ import Rating from "@/components/rating";
 import CartActions from "@/components/cartActions";
 
 import { getProduct } from "@/lib/utils";
+import { Product } from "../products.interface";
+
+export const generateMetadata = async ({
+  params,
+}: {
+  params: { slug: string };
+}) => {
+  const { slug } = params;
+  const product: Product = await getProduct(slug);
+
+  return {
+    title: product.name,
+    description: product.description,
+  };
+};
 
 export default async function ProductPage({
   params,

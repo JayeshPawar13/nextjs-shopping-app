@@ -1,6 +1,18 @@
 import { title } from "@/components/primitives";
 import ProductCard from "@/components/product-card";
 import { getProducts, getUsers } from "@/lib/utils";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Products",
+    template: "",
+  },
+  description: "View All Products",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
 
 export default async function ProductsPage() {
   const [products, user] = await Promise.all([getProducts(), getUsers()]);
