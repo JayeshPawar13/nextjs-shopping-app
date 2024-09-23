@@ -14,10 +14,7 @@ export default async function ProductsPage() {
       </div>
 
       <div className="mt-4">
-        <ProductCard
-          products={JSON.parse(JSON.stringify(products))}
-          user={JSON.parse(JSON.stringify(user))}
-        />
+        <ProductCard products={products} user={user} />
       </div>
     </>
   );

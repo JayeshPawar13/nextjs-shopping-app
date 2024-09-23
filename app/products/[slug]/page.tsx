@@ -44,11 +44,7 @@ export default async function ProductPage({
             </Card>
             <div className="flex -mx-2 mb-4 pt-4 justify-center">
               {user && cart && (
-                <CartActions
-                  product={JSON.parse(JSON.stringify(product))}
-                  userInp={JSON.parse(JSON.stringify(user))}
-                  cartInp={JSON.parse(JSON.stringify(cart))}
-                />
+                <CartActions product={product} userInp={user} cartInp={cart} />
               )}
             </div>
           </div>

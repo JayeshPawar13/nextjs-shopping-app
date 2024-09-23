@@ -9,10 +9,7 @@ export default async function CartPage() {
   return (
     <>
       {cart && products && user && (
-        <CartListItems
-          products={JSON.parse(JSON.stringify(products))}
-          user={JSON.parse(JSON.stringify(user))}
-        />
+        <CartListItems products={products} user={user} />
       )}
     </>
   );
