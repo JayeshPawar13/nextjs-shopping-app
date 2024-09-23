@@ -23,8 +23,11 @@ export default function CartListItems({
   const [cartItems, setCartItems] = useState<Cart | undefined>(cart);
   const [total, setTotal] = useState(0);
 
+  console.log("outside");
+
   const productMap = useMemo(() => {
     const map = new Map<string, Product>();
+    console.log("memo");
 
     products.forEach((product) => map.set(product._id.toString(), product));
 
