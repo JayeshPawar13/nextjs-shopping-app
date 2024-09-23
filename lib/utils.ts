@@ -21,7 +21,11 @@ const getCollection = async <T extends CollectionName>(
   const client = await clientPromise;
 
   return client
-    .db(process.env.mongodb_database)
+    .db(
+      collectionName == "shopping-app-user"
+        ? process.env.mongodb_user_database
+        : process.env.mongodb_database
+    )
     .collection<CollectionType<T>>(collectionName);
 };
 
