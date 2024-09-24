@@ -1,22 +1,20 @@
-"use client";
-import { Button, ButtonGroup } from "@nextui-org/button";
-import { MdDeleteOutline } from "react-icons/md";
-import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
-import { useState } from "react";
-import Image from "next/image";
+'use client';
+import { Button, ButtonGroup } from '@nextui-org/button';
+import Image from 'next/image';
+import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
+import { MdDeleteOutline } from 'react-icons/md';
 
-import { User } from "@/app/user.interface";
-import { Product } from "@/app/products/products.interface";
-import { Cart } from "@/app/cart/cart.interface";
-import { useAppContext } from "@/app/providers";
+import { Cart } from '@/app/cart/cart.interface';
+import { Product } from '@/app/products/products.interface';
+import { useAppContext } from '@/app/providers';
 
 interface CartActionsProps {
   product: Product;
   hideDelete?: boolean;
-  onDelete?: Function;
-  onRemoveFromCart?: Function;
-  onAddToCart?: Function;
-  handleSetCart?: Function;
+  onDelete?: () => void;
+  onRemoveFromCart?: () => void;
+  onAddToCart?: () => void;
+  handleSetCart?: (cart: Cart) => void;
 }
 
 export default function CartActions({
@@ -32,12 +30,12 @@ export default function CartActions({
 
   const updateCartHandler = async (obj: Cart) => {
     const response = await fetch(`/api/cart?id=${user?._id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(obj),
-      cache: "no-store",
+      cache: 'no-store',
     });
     const cartResp = await response.json();
 
@@ -52,8 +50,8 @@ export default function CartActions({
     const response = await fetch(
       `/api/cart?id=${user?._id}&productId=${productId}`,
       {
-        method: "DELETE",
-        cache: "no-store",
+        method: 'DELETE',
+        cache: 'no-store',
       }
     );
     const cartResp = await response.json();
@@ -66,7 +64,7 @@ export default function CartActions({
     }
   };
 
-  const modifyCart = (operation: "add" | "remove" | "delete") => {
+  const modifyCart = (operation: 'add' | 'remove' | 'delete') => {
     if (user && product) {
       let cartObj = cart || {
         userId: user._id,
@@ -77,9 +75,9 @@ export default function CartActions({
       const item = cartObj.items.find((item) => item.productId === product._id);
 
       if (item) {
-        if (operation === "add") {
+        if (operation === 'add') {
           item.quantity += 1;
-        } else if (operation === "remove") {
+        } else if (operation === 'remove') {
           item.quantity -= 1;
         } else {
           cartObj.items = cartObj.items.filter(
@@ -121,7 +119,7 @@ export default function CartActions({
                   startContent={<MdDeleteOutline />}
                   variant="bordered"
                   onClick={(e) => {
-                    modifyCart("delete");
+                    modifyCart('delete');
                     e.preventDefault();
                   }}
                 />
@@ -135,7 +133,7 @@ export default function CartActions({
                     startContent={<MdDeleteOutline />}
                     variant="bordered"
                     onClick={(e) => {
-                      modifyCart("delete");
+                      modifyCart('delete');
                       e.preventDefault();
                     }}
                   />
@@ -150,7 +148,7 @@ export default function CartActions({
                   size="sm"
                   startContent={<AiOutlineMinus />}
                   onClick={(e) => {
-                    modifyCart("remove");
+                    modifyCart('remove');
                     e.preventDefault();
                   }}
                 />
@@ -170,7 +168,7 @@ export default function CartActions({
                 size="sm"
                 startContent={<AiOutlinePlus />}
                 onClick={(e) => {
-                  modifyCart("add");
+                  modifyCart('add');
                   e.preventDefault();
                 }}
               />
@@ -191,7 +189,7 @@ export default function CartActions({
               radius="full"
               size="sm"
               onClick={(e) => {
-                modifyCart("add");
+                modifyCart('add');
                 e.preventDefault();
               }}
             >

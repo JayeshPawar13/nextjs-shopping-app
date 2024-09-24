@@ -1,14 +1,14 @@
-import CartListItems from "@/components/cartItemList";
-import { Metadata } from "next";
+import CartListItems from '@/components/cartItemList';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    default: "Cart",
-    template: "",
+    default: 'Cart',
+    template: '',
   },
-  description: "View Your Cart",
+  description: 'View Your Cart',
   icons: {
-    icon: "/favicon.ico",
+    icon: '/favicon.ico',
   },
 };
 

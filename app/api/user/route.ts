@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
+import { NextRequest } from 'next/server';
 
-import { getApiUtil } from "@/lib/apiUtils";
+import { getApiUtil } from '@/lib/apiUtils';
 
 export async function GET(request: NextRequest) {
-  return getApiUtil(request, "shopping-app-user");
+  return getApiUtil(request, 'shopping-app-user');
 }

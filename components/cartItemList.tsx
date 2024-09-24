@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Card } from "@nextui-org/card";
-import { Button } from "@nextui-org/button";
-import Image from "next/image";
-import { Spinner } from "@nextui-org/spinner";
-import { Suspense, useEffect, useState, useMemo } from "react";
+import { Button } from '@nextui-org/button';
+import { Card } from '@nextui-org/card';
+import { Spinner } from '@nextui-org/spinner';
+import Image from 'next/image';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
-import CartActions from "@/components/cartActions";
-import { Product } from "@/app/products/products.interface";
-import { useAppContext } from "@/app/providers";
+import { Product } from '@/app/products/products.interface';
+import { useAppContext } from '@/app/providers';
+import CartActions from '@/components/cartActions';
 
 export default function CartListItems() {
   const { cart, setCart } = useAppContext();
@@ -16,12 +16,12 @@ export default function CartListItems() {
   const { user } = useAppContext();
   const [total, setTotal] = useState(0);
 
-  console.log("outside");
+  console.log('outside');
 
   const productMap = useMemo(() => {
     const map = new Map<string, Product>();
 
-    console.log("memo");
+    console.log('memo');
 
     products.forEach((product) => map.set(product._id.toString(), product));
 
@@ -41,18 +41,18 @@ export default function CartListItems() {
     }
   }, [cart, productMap]);
 
-  const fetchCart = async () => {
-    const response = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`, {
-      cache: "no-store",
-    });
-    const cartResp = await response.json();
-
-    setCart(cartResp[0]);
-  };
-
   useEffect(() => {
+    const fetchCart = async () => {
+      const response = await fetch(`/api/cart?id=66e5e9e5f1bb7da2963ec428`, {
+        cache: 'no-store',
+      });
+      const cartResp = await response.json();
+
+      setCart(cartResp[0]);
+    };
+
     fetchCart();
-  }, []);
+  }, [setCart]);
 
   return (
     <>
@@ -78,7 +78,7 @@ export default function CartListItems() {
                             <div className="flex justify-between items-center">
                               <div className="flex justify-between gap-4 mt-2">
                                 <Image
-                                  alt={product?.name || "Product Image"}
+                                  alt={product?.name || 'Product Image'}
                                   className="rounded-lg"
                                   height={64}
                                   src={`/images/${product?.image}`}

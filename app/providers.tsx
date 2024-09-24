@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { NextUIProvider } from "@nextui-org/system";
-import { useRouter } from "next/navigation";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ThemeProviderProps } from "next-themes/dist/types";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { NextUIProvider } from '@nextui-org/system';
+import { useRouter } from 'next/navigation';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { ThemeProviderProps } from 'next-themes/dist/types';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
-import { Cart } from "./cart/cart.interface";
-import { User } from "./user.interface";
-import { Product } from "./products/products.interface";
+import { Cart } from './cart/cart.interface';
+import { User } from './user.interface';
+import { Product } from './products/products.interface';
 
 export interface ProvidersProps {
   children: ReactNode;
@@ -26,7 +26,7 @@ interface ContextProps {
 
 const defaultContextValues: ContextProps = {
   cart: {
-    userId: "",
+    userId: '',
     items: [],
   },
   products: [],

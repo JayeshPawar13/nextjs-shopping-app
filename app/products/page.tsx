@@ -1,23 +1,23 @@
-import { title } from "@/components/primitives";
-import ProductCard from "@/components/product-card";
-import { getProducts, getUsers } from "@/lib/utils";
-import { Metadata } from "next";
+import { title } from '@/components/primitives';
+import ProductCard from '@/components/product-card';
+import { getProducts, getUsers } from '@/lib/utils';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    default: "Products",
-    template: "",
+    default: 'Products',
+    template: '',
   },
-  description: "View All Products",
+  description: 'View All Products',
   icons: {
-    icon: "/favicon.ico",
+    icon: '/favicon.ico',
   },
 };
 
 export default async function ProductsPage() {
   const [products, user] = await Promise.all([getProducts(), getUsers()]);
 
-  if (!products) throw new Error("Products not found");
+  if (!products) throw new Error('Products not found');
 
   return (
     <>

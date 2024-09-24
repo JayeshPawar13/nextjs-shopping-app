@@ -1,18 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Collection, ObjectId } from "mongodb";
+import { NextRequest, NextResponse } from 'next/server';
+import { Collection, ObjectId } from 'mongodb';
 
-import clientPromise from "./mongodb";
+import clientPromise from './mongodb';
 
-import { Product } from "@/app/products/products.interface";
-import { Cart } from "@/app/cart/cart.interface";
-import { User } from "@/app/user.interface";
+import { Product } from '@/app/products/products.interface';
+import { Cart } from '@/app/cart/cart.interface';
+import { User } from '@/app/user.interface';
 
-type CollectionName = "cart" | "products" | "shopping-app-user";
-type CollectionType<T extends CollectionName> = T extends "cart"
+type CollectionName = 'cart' | 'products' | 'shopping-app-user';
+type CollectionType<T extends CollectionName> = T extends 'cart'
   ? Cart
-  : T extends "products"
+  : T extends 'products'
     ? Product
-    : T extends "shopping-app-user"
+    : T extends 'shopping-app-user'
       ? User
       : never;
 
@@ -31,8 +31,8 @@ export async function getApiUtil(
   collectionName: CollectionName
 ) {
   const url = new URL(request.url);
-  const id = url.searchParams.get("id");
-  const priceForProducts = url.searchParams.get("priceForProducts")?.split(",");
+  const id = url.searchParams.get('id');
+  const priceForProducts = url.searchParams.get('priceForProducts')?.split(',');
   const objectIds = priceForProducts?.map((id) => new ObjectId(id));
 
   try {
@@ -40,13 +40,13 @@ export async function getApiUtil(
     let result;
 
     if (id) {
-      if (collectionName === "cart") {
+      if (collectionName === 'cart') {
         result = await collection.findOne({ userId: id });
       } else {
         result = await collection.findOne({ _id: new ObjectId(id) });
       }
       result = result ? [result] : [];
-    } else if (priceForProducts && collectionName === "products") {
+    } else if (priceForProducts && collectionName === 'products') {
       result = await collection.find({ _id: { $in: objectIds } }).toArray();
     } else {
       result = await collection.find({}).toArray();
@@ -76,7 +76,7 @@ export async function postApiUtil(
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to insert data" },
+      { error: 'Failed to insert data' },
       { status: 500 }
     );
   }
@@ -100,7 +100,7 @@ export async function putApiUtil(
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to update data" },
+      { error: 'Failed to update data' },
       { status: 500 }
     );
   }
@@ -112,11 +112,11 @@ export async function deleteApiUtil(
 ) {
   try {
     const url = new URL(request.url);
-    const id = url.searchParams.get("id");
-    const productId = url.searchParams.get("productId");
+    const id = url.searchParams.get('id');
+    const productId = url.searchParams.get('productId');
 
     if (!id || !productId) {
-      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
     }
 
     const collection = await getCollection(collectionName);
@@ -133,8 +133,8 @@ export async function deleteApiUtil(
           success: result.acknowledged && result.modifiedCount > 0,
           message:
             result.modifiedCount > 0
-              ? "Item removed successfully"
-              : "No item removed",
+              ? 'Item removed successfully'
+              : 'No item removed',
         },
         { status: 200 }
       );
@@ -146,15 +146,15 @@ export async function deleteApiUtil(
           success: result.acknowledged && result.deletedCount > 0,
           message:
             result.deletedCount > 0
-              ? "Item removed successfully"
-              : "No item removed",
+              ? 'Item removed successfully'
+              : 'No item removed',
         },
         { status: 200 }
       );
     }
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to delete item" },
+      { error: 'Failed to delete item' },
       { status: 500 }
     );
   }

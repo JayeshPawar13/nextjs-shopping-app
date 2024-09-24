@@ -1,13 +1,13 @@
-import { title } from "@/components/primitives";
-import { Metadata } from "next";
+import { title } from '@/components/primitives';
+import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: {
-    default: "About",
-    template: "",
+    default: 'About',
+    template: '',
   },
-  description: "View About",
+  description: 'View About',
   icons: {
-    icon: "/favicon.ico",
+    icon: '/favicon.ico',
   },
 };
 export default function AboutPage() {

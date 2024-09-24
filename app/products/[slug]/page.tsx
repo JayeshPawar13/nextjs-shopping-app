@@ -1,12 +1,12 @@
-import Image from "next/image";
-import { Card } from "@nextui-org/card";
-import { Spinner } from "@nextui-org/spinner";
+import Image from 'next/image';
+import { Card } from '@nextui-org/card';
+import { Spinner } from '@nextui-org/spinner';
 
-import Rating from "@/components/rating";
-import CartActions from "@/components/cartActions";
+import Rating from '@/components/rating';
+import CartActions from '@/components/cartActions';
 
-import { getProduct } from "@/lib/utils";
-import { Product } from "../products.interface";
+import { getProduct } from '@/lib/utils';
+import { Product } from '../products.interface';
 
 export const generateMetadata = async ({
   params,
@@ -46,7 +46,7 @@ export default async function ProductPage({
           <div className="md:flex-1 px-4">
             <Card className="w-fit ml-auto mr-auto">
               <Image
-                alt={product.name || "Product Image"}
+                alt={product.name || 'Product Image'}
                 className="object-cover"
                 height={500}
                 src={`/images/${product.image}`}
@@ -86,7 +86,7 @@ export default async function ProductPage({
                 Select Color:
               </span>
               <div className="flex items-center mt-2">
-                {["gray", "green", "white"].map((color) => (
+                {['gray', 'green', 'white'].map((color) => (
                   <button
                     key={color}
                     className={`w-6 h-6 rounded-full bg-${color} dark:bg-${color}-700 mr-2`}
@@ -99,7 +99,7 @@ export default async function ProductPage({
                 Select Size:
               </span>
               <div className="flex items-center mt-2">
-                {["S", "M", "L", "XL", "XXL"].map((size) => (
+                {['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
                   <button
                     key={size}
                     className="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600"

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 import {
   Navbar as NextUINavbar,
   NavbarContent,
   NavbarBrand,
   NavbarItem,
-} from "@nextui-org/navbar";
-import { link as linkStyles } from "@nextui-org/theme";
-import NextLink from "next/link";
-import clsx from "clsx";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+} from '@nextui-org/navbar';
+import { link as linkStyles } from '@nextui-org/theme';
+import NextLink from 'next/link';
+import clsx from 'clsx';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
-import { siteConfig } from "@/config/site";
-import { Logo } from "@/components/icons";
-import { useAppContext } from "@/app/providers";
-import { useEffect, useState } from "react";
+import { siteConfig } from '@/config/site';
+import { Logo } from '@/components/icons';
+import { useAppContext } from '@/app/providers';
+import { useEffect, useState } from 'react';
 
 export const Navbar = () => {
   const router = useRouter();
@@ -49,8 +49,8 @@ export const Navbar = () => {
             <NavbarItem key={item.href}>
               <NextLink
                 className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  linkStyles({ color: 'foreground' }),
+                  'data-[active=true]:text-primary data-[active=true]:font-medium'
                 )}
                 color="foreground"
                 href={item.href}
@@ -78,15 +78,15 @@ export const Navbar = () => {
               src="/icons/cart.svg"
               width={18}
               className={clsx(
-                "transition-transform duration-300",
-                animate ? "scale-125" : "scale-100"
+                'transition-transform duration-300',
+                animate ? 'scale-125' : 'scale-100'
               )}
             />
             {totalQuantity > 0 && (
               <span
                 className={`absolute -top-4 -right-0.5 bg-orange-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center ${clsx(
-                  "transition-transform duration-300",
-                  animate ? "scale-110" : "scale-100"
+                  'transition-transform duration-300',
+                  animate ? 'scale-110' : 'scale-100'
                 )}`}
               >
                 {totalQuantity}
